@@ -227,16 +227,16 @@ def remove_markdown_syntax(text: str) -> str:
     if not isinstance(text, str):
         text = str(text)
 
-    # 处理markdown链接 [text](url) -> text: url（保留可点击链接）
-    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1\n🔗 \2', text)
+    # 处理markdown链接 [text](url) -> text（链接单独处理）
+    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1', text)
 
     # 去除粗体标记 **text** -> text（用emoji和分隔线已经足够突出）
     text = re.sub(r'\*\*([^\*]+)\*\*', r'\1', text)
 
     # 去除HTML标签但保留内容，并优化格式
-    text = re.sub(r'<font[^>]*color=[\'"]?red[\'"]?[^>]*>([^<]*)</font>', r'🔴 \1', text)  # 红色字体用红色圆点
+    text = re.sub(r'<font[^>]*color=[\'"]?red[\'"]?[^>]*>([^<]*)</font>', r'📊 \1', text)  # 红色字体用图表图标
     text = re.sub(r'<font[^>]*color=[\'"]?green[\'"]?[^>]*>([^<]*)</font>', r'🟢 \1', text)  # 绿色字体用绿色圆点
-    text = re.sub(r'<font[^>]*color=[\'"]?grey[\'"]?[^>]*>([^<]*)</font>', r'⚪ \1', text)  # 灰色字体用白色圆点
+    text = re.sub(r'<font[^>]*color=[\'"]?grey[\'"]?[^>]*>([^<]*)</font>', r'⏰ \1', text)  # 灰色字体用时钟图标
     text = re.sub(r'<font[^>]*>([^<]*)</font>', r'\1', text)  # 其他font标签直接去除
     text = re.sub(r'<[^>]+>', '', text)  # 去除其他HTML标签
 
@@ -247,7 +247,7 @@ def remove_markdown_syntax(text: str) -> str:
     text = re.sub(r'`([^`]+)`', r'\1', text)
 
     # 处理markdown标题，转换为更醒目的格式
-    text = re.sub(r'^#+\s*(.+)$', r'━━━━━━━━━━━━━━━━━━━━\n📋 \1\n━━━━━━━━━━━━━━━━━━━━', text, flags=re.MULTILINE)
+    text = re.sub(r'^#+\s*(.+)$', r'─────────────────────\n📋 \1\n─────────────────────', text, flags=re.MULTILINE)
 
     # 优化列表项的显示
     text = re.sub(r'^(\s*)(\d+)\.\s+', r'\1\2️⃣ ', text, flags=re.MULTILINE)  # 数字列表用数字emoji
@@ -259,7 +259,7 @@ def remove_markdown_syntax(text: str) -> str:
 
     # 在重要信息前后添加分隔线
     text = re.sub(r'(📊\s*\*\*[^*]+\*\*)', r'\n\1\n', text)  # 统计标题前后加换行
-    text = re.sub(r'(>\s*更新时间：[^\n]+)', r'\n━━━━━━━━━━━━━━━━━━━━\n\1', text)  # 更新时间前加分隔线
+    text = re.sub(r'\n>\s*更新时间：([^\n]+)', r'\n─────────────────────\n🕐 更新时间：\1', text)  # 更新时间用时钟图标，减少间距
 
     return text.strip()
 
@@ -1329,24 +1329,53 @@ def format_title_for_platform(
         return result
 
     elif platform == "wework":
-        if link_url:
-            formatted_title = f"[{cleaned_title}]({link_url})"
+        # 检查是否为text格式（通过CONFIG判断）
+        msgtype = CONFIG.get("WEWORK_MSGTYPE", "markdown").lower()
+
+        if msgtype == "text":
+            # text格式：标题和链接分行显示
+            title_prefix = "🆕 " if title_data.get("is_new") else ""
+
+            if show_source:
+                result = f"[{title_data['source_name']}] {title_prefix}{cleaned_title}"
+            else:
+                result = f"{title_prefix}{cleaned_title}"
+
+            # 链接单独一行
+            if link_url:
+                result += f"\n🔗 {link_url}"
+
+            # 排名和其他信息
+            info_parts = []
+            if rank_display:
+                info_parts.append(f"📊 {rank_display}")
+            if title_data["time_display"]:
+                info_parts.append(f"⏰ {title_data['time_display']}")
+            if title_data["count"] > 1:
+                info_parts.append(f"🟢 ({title_data['count']}次)")
+
+            if info_parts:
+                result += f"\n{' '.join(info_parts)}"
         else:
-            formatted_title = cleaned_title
+            # markdown格式：保持原有格式
+            if link_url:
+                formatted_title = f"[{cleaned_title}]({link_url})"
+            else:
+                formatted_title = cleaned_title
 
-        title_prefix = "🆕 " if title_data.get("is_new") else ""
+            title_prefix = "🆕 " if title_data.get("is_new") else ""
 
-        if show_source:
-            result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
-        else:
-            result = f"{title_prefix}{formatted_title}"
+            if show_source:
+                result = f"[{title_data['source_name']}] {title_prefix}{formatted_title}"
+            else:
+                result = f"{title_prefix}{formatted_title}"
 
-        if rank_display:
-            result += f" {rank_display}"
-        if title_data["time_display"]:
-            result += f" - {title_data['time_display']}"
-        if title_data["count"] > 1:
-            result += f" ({title_data['count']}次)"
+            if rank_display:
+                result += f" {rank_display}"
+            if title_data["time_display"]:
+                result += f" - {title_data['time_display']}"
+            if title_data["count"] > 1:
+                result += f" ({title_data['count']}次)"
 
         return result
 
