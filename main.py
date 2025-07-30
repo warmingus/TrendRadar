@@ -223,21 +223,21 @@ def html_escape(text: str) -> str:
 
 
 def remove_markdown_syntax(text: str) -> str:
-    """转换markdown为企业微信text格式，尽可能保持原有样式"""
+    """转换markdown为企业微信text格式，优化排版美观度"""
     if not isinstance(text, str):
         text = str(text)
 
     # 处理markdown链接 [text](url) -> text: url（保留可点击链接）
-    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1: \2', text)
+    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1\n🔗 \2', text)
 
-    # 保留粗体格式 **text** （企业微信text支持**粗体**）
-    # 不做处理，保持原样
+    # 去除粗体标记 **text** -> text（用emoji和分隔线已经足够突出）
+    text = re.sub(r'\*\*([^\*]+)\*\*', r'\1', text)
 
-    # 保留换行和其他格式字符（如图标emoji等）
-    # 不做处理，保持原样
-
-    # 去除HTML标签（企业微信text不支持HTML）
-    text = re.sub(r'<font[^>]*>([^<]*)</font>', r'\1', text)  # 去除font标签但保留内容
+    # 去除HTML标签但保留内容，并优化格式
+    text = re.sub(r'<font[^>]*color=[\'"]?red[\'"]?[^>]*>([^<]*)</font>', r'🔴 \1', text)  # 红色字体用红色圆点
+    text = re.sub(r'<font[^>]*color=[\'"]?green[\'"]?[^>]*>([^<]*)</font>', r'🟢 \1', text)  # 绿色字体用绿色圆点
+    text = re.sub(r'<font[^>]*color=[\'"]?grey[\'"]?[^>]*>([^<]*)</font>', r'⚪ \1', text)  # 灰色字体用白色圆点
+    text = re.sub(r'<font[^>]*>([^<]*)</font>', r'\1', text)  # 其他font标签直接去除
     text = re.sub(r'<[^>]+>', '', text)  # 去除其他HTML标签
 
     # 去除markdown代码块标记（保留内容）
@@ -246,11 +246,20 @@ def remove_markdown_syntax(text: str) -> str:
     # 去除markdown行内代码标记（保留内容）
     text = re.sub(r'`([^`]+)`', r'\1', text)
 
-    # 处理markdown标题，转换为更简洁的格式
-    text = re.sub(r'^#+\s*(.+)$', r'【\1】', text, flags=re.MULTILINE)
+    # 处理markdown标题，转换为更醒目的格式
+    text = re.sub(r'^#+\s*(.+)$', r'━━━━━━━━━━━━━━━━━━━━\n📋 \1\n━━━━━━━━━━━━━━━━━━━━', text, flags=re.MULTILINE)
 
-    # 保留换行格式，只清理多余的空行
-    text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
+    # 优化列表项的显示
+    text = re.sub(r'^(\s*)(\d+)\.\s+', r'\1\2️⃣ ', text, flags=re.MULTILINE)  # 数字列表用数字emoji
+    text = re.sub(r'^(\s*)-\s+', r'\1▪️ ', text, flags=re.MULTILINE)  # 无序列表用小方块
+
+    # 添加适当的分隔和间距
+    text = re.sub(r'\n\n', '\n\n', text)  # 保持段落间距
+    text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)  # 清理多余空行
+
+    # 在重要信息前后添加分隔线
+    text = re.sub(r'(📊\s*\*\*[^*]+\*\*)', r'\n\1\n', text)  # 统计标题前后加换行
+    text = re.sub(r'(>\s*更新时间：[^\n]+)', r'\n━━━━━━━━━━━━━━━━━━━━\n\1', text)  # 更新时间前加分隔线
 
     return text.strip()
 
