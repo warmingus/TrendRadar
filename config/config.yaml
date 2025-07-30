@@ -32,6 +32,7 @@ notification:
   message_batch_size: 4000 # 消息分批大小（字节）(这个配置别动)
   batch_send_interval: 1 # 批次发送间隔（秒）
   feishu_message_separator: "━━━━━━━━━━━━━━━━━━━" # feishu 消息分割线
+  wework_msgtype: "markdown" # 企业微信消息类型，可选: "text"|"markdown"
 
   webhooks:
     feishu_url: "" # 飞书机器人的 webhook URL

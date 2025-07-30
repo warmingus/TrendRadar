@@ -47,6 +47,7 @@ def load_config():
         "FEISHU_MESSAGE_SEPARATOR": config_data["notification"][
             "feishu_message_separator"
         ],
+        "WEWORK_MSGTYPE": config_data["notification"].get("wework_msgtype", "markdown"),
         "WEIGHT_CONFIG": {
             "RANK_WEIGHT": config_data["weight"]["rank_weight"],
             "FREQUENCY_WEIGHT": config_data["weight"]["frequency_weight"],
@@ -74,6 +75,11 @@ def load_config():
     config["TELEGRAM_CHAT_ID"] = os.environ.get(
         "TELEGRAM_CHAT_ID", ""
     ).strip() or webhooks.get("telegram_chat_id", "")
+
+    # 企业微信消息类型配置（环境变量优先）
+    config["WEWORK_MSGTYPE"] = os.environ.get(
+        "WEWORK_MSGTYPE", ""
+    ).strip() or config["WEWORK_MSGTYPE"]
 
     # 输出配置来源信息
     webhook_sources = []
@@ -214,6 +220,39 @@ def html_escape(text: str) -> str:
         .replace('"', "&quot;")
         .replace("'", "&#x27;")
     )
+
+
+def remove_markdown_syntax(text: str) -> str:
+    """转换markdown为企业微信text格式，尽可能保持原有样式"""
+    if not isinstance(text, str):
+        text = str(text)
+
+    # 处理markdown链接 [text](url) -> text: url（保留可点击链接）
+    text = re.sub(r'\[([^\]]+)\]\(([^\)]+)\)', r'\1: \2', text)
+
+    # 保留粗体格式 **text** （企业微信text支持**粗体**）
+    # 不做处理，保持原样
+
+    # 保留换行和其他格式字符（如图标emoji等）
+    # 不做处理，保持原样
+
+    # 去除HTML标签（企业微信text不支持HTML）
+    text = re.sub(r'<font[^>]*>([^<]*)</font>', r'\1', text)  # 去除font标签但保留内容
+    text = re.sub(r'<[^>]+>', '', text)  # 去除其他HTML标签
+
+    # 去除markdown代码块标记（保留内容）
+    text = re.sub(r'```([^`]+)```', r'\1', text)
+
+    # 去除markdown行内代码标记（保留内容）
+    text = re.sub(r'`([^`]+)`', r'\1', text)
+
+    # 处理markdown标题，转换为更简洁的格式
+    text = re.sub(r'^#+\s*(.+)$', r'【\1】', text, flags=re.MULTILINE)
+
+    # 保留换行格式，只清理多余的空行
+    text = re.sub(r'\n\s*\n\s*\n', '\n\n', text)
+
+    return text.strip()
 
 
 # === 数据获取 ===
@@ -2240,12 +2279,25 @@ def send_to_wework(
             f"发送企业微信第 {i}/{len(batches)} 批次，大小：{batch_size} 字节 [{report_type}]"
         )
 
+        # 获取企业微信消息类型配置
+        msgtype = CONFIG.get("WEWORK_MSGTYPE", "markdown").lower()
+
         # 添加批次标识
         if len(batches) > 1:
-            batch_header = f"**[第 {i}/{len(batches)} 批次]**\n\n"
+            if msgtype == "text":
+                batch_header = f"[第 {i}/{len(batches)} 批次]\n\n"
+            else:
+                batch_header = f"**[第 {i}/{len(batches)} 批次]**\n\n"
             batch_content = batch_header + batch_content
 
-        payload = {"msgtype": "markdown", "markdown": {"content": batch_content}}
+        # 根据配置选择消息类型
+        if msgtype == "text":
+            # 去除markdown语法
+            text_content = remove_markdown_syntax(batch_content)
+            payload = {"msgtype": "text", "text": {"content": text_content}}
+        else:
+            # 默认使用markdown格式
+            payload = {"msgtype": "markdown", "markdown": {"content": batch_content}}
 
         try:
             response = requests.post(
