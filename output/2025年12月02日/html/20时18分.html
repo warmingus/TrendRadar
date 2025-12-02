@@ -1,0 +1,106 @@
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>频率词统计报告</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            h1, h2 { color: #333; }
+            table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            tr:nth-child(even) { background-color: #f9f9f9; }
+            .word { font-weight: bold; }
+            .count { text-align: center; }
+            .percentage { text-align: center; }
+            .titles { max-width: 500px; }
+            .source { color: #666; font-style: italic; }
+            .error { color: #d9534f; }
+            .news-link { 
+                color: #007bff; 
+                text-decoration: none; 
+                border-bottom: 1px dotted #007bff;
+            }
+            .news-link:hover { 
+                color: #0056b3; 
+                text-decoration: underline; 
+            }
+            .news-link:visited { 
+                color: #6f42c1; 
+            }
+            .no-link { 
+                color: #333; 
+            }
+            .new-title {
+                background-color: #fff3cd;
+                border: 1px solid #ffc107;
+                border-radius: 3px;
+                padding: 2px 6px;
+                margin: 2px 0;
+            }
+            .new-section {
+                background-color: #d1ecf1;
+                border: 1px solid #bee5eb;
+                border-radius: 5px;
+                padding: 10px;
+                margin-top: 10px;
+            }
+            .new-section h3 {
+                color: #0c5460;
+                margin-top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>频率词统计报告</h1>
+    <p>报告类型: 实时分析</p><p>总标题数: 255</p><p>生成时间: 2025-12-02 20:18:19</p>
+        <table>
+            <tr>
+                <th>排名</th>
+                <th>频率词</th>
+                <th>出现次数</th>
+                <th>占比</th>
+                <th>相关标题</th>
+            </tr>
+    
+            <tr>
+                <td>1</td>
+                <td class="word">ai 人工智能</td>
+                <td class="count">7</td>
+                <td class="percentage">2.75%</td>
+                <td class="titles"><div class='new-title'>🆕 [财联社热门] <a href="https://www.cls.cn/detail/2216943" target="_blank" class="news-link">亚马逊云计算盛会开幕！CEO今晚登台，新AI模型和AI芯片即将亮相？</a> <font color='red'><strong>[2]</strong></font> <font color='grey'>- 20时18分</font></div><br>[财联社热门] <a href="https://www.cls.cn/detail/2216806" target="_blank" class="news-link">AI Agent高权限进驻成手机新卖点 “侵入式AI”却已遭黑灰产利用</a> <font color='red'><strong>[4]</strong></font> <font color='grey'>- 20时18分</font><br>[今日头条] <a href="https://www.toutiao.com/trending/7578802867742461503/" target="_blank" class="news-link">网警破获通过AI换脸非法侵入系统案</a> [6] <font color='grey'>- 20时18分</font><br>[百度热搜] <a href="https://www.baidu.com/s?wd=%E7%BD%91%E8%AD%A6%E7%A0%B4%E8%8E%B7%E2%80%9CAI%E6%8D%A2%E8%84%B8%E2%80%9D%E4%BE%B5%E5%85%A5%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%A1%88" target="_blank" class="news-link">网警破获“AI换脸”侵入计算机案</a> [6] <font color='grey'>- 20时18分</font><br>[财联社热门] <a href="https://www.cls.cn/detail/2216759" target="_blank" class="news-link">AI竞赛步入“资源争夺战”！美国欲拉八国签协议 深化矿产供应链</a> [6] <font color='grey'>- 20时18分</font><br>[抖音] <a href="https://www.douyin.com/hot/2323802" target="_blank" class="news-link">网警破获AI换脸非法侵入案</a> [6] <font color='grey'>- 20时18分</font><br><div class='new-title'>🆕 [华尔街见闻] <a href="https://wallstreetcn.com/articles/3760476" target="_blank" class="news-link">从夸克眼镜，到豆包手机，为什么巨头扎堆端侧AI?</a> [8] <font color='grey'>- 20时18分</font></div></td>
+            </tr>
+        
+            <tr>
+                <td>2</td>
+                <td class="word">DeepSeek 梁文锋</td>
+                <td class="count">4</td>
+                <td class="percentage">1.57%</td>
+                <td class="titles">[华尔街见闻] <a href="https://wallstreetcn.com/articles/3760468" target="_blank" class="news-link">开源最强！“拳打GPT 5”，“脚踢Gemini-3.0”，DeepSeek V3.2为何提升这么多？</a> <font color='red'><strong>[4]</strong></font> <font color='grey'>- 20时18分</font><br>[bilibili 热搜] <a href="https://search.bilibili.com/all?keyword=DeepSeek%E6%96%B0%E6%A8%A1%E5%9E%8B%E8%BF%BD%E5%B9%B3Gemini" target="_blank" class="news-link">DeepSeek新模型追平Gemini</a> [8] <font color='grey'>- 20时18分</font><br><div class='new-title'>🆕 [华尔街见闻] <a href="https://wallstreetcn.com/articles/3760505" target="_blank" class="news-link">V3.2逼近Gemini 3，DeepSeek硬气喊话：接下来我要堆算力了</a> [10] <font color='grey'>- 20时18分</font></div><br>[bilibili 热搜] <a href="https://search.bilibili.com/all?keyword=%E5%AE%9E%E6%B5%8BDeepSeekV3.2%E6%AD%A3%E5%BC%8F%E7%89%88" target="_blank" class="news-link">实测DeepSeekV3.2正式版</a> [11] <font color='grey'>- 20时18分</font></td>
+            </tr>
+        
+            <tr>
+                <td>3</td>
+                <td class="word">chatgpt Sam Altman openai</td>
+                <td class="count">2</td>
+                <td class="percentage">0.78%</td>
+                <td class="titles">[华尔街见闻] <a href="https://wallstreetcn.com/articles/3760479" target="_blank" class="news-link">英伟达砸20亿入股EDA巨头新思科技，黄仁勋盛赞“巨大扩展机遇”、否认类似OpenAI交易闭环</a> [6] <font color='grey'>- 20时18分</font><br><div class='new-title'>🆕 [微博] <a href="https://s.weibo.com/weibo?q=%23OpenAI%E6%8B%89%E5%93%8D%E7%BA%A2%E8%89%B2%E8%AD%A6%E6%8A%A5%23&amp;t=31&amp;band_rank=10&amp;Refer=top" target="_blank" class="news-link">OpenAI拉响红色警报</a> [10] <font color='grey'>- 20时18分</font></div></td>
+            </tr>
+        
+            <tr>
+                <td>4</td>
+                <td class="word">谷歌 google gemini deepmind</td>
+                <td class="count">1</td>
+                <td class="percentage">0.39%</td>
+                <td class="titles">[澎湃新闻] <a href="https://m.thepaper.cn/newsDetail_forward_32067068" target="_blank" class="news-link">谷歌揭秘了AI竞赛的底牌</a> [12] <font color='grey'>- 20时18分</font></td>
+            </tr>
+        
+        </table>
+    
+        <div class="new-section">
+            <h3>🆕 本次新增热点新闻 (共 4 条)</h3>
+        <h4>华尔街见闻 (2 条)</h4><ul><li><a href="https://wallstreetcn.com/articles/3760476" target="_blank" class="news-link">从夸克眼镜，到豆包手机，为什么巨头扎堆端侧AI?</a> [8]</li><li><a href="https://wallstreetcn.com/articles/3760505" target="_blank" class="news-link">V3.2逼近Gemini 3，DeepSeek硬气喊话：接下来我要堆算力了</a> [10]</li></ul><h4>财联社热门 (1 条)</h4><ul><li><a href="https://www.cls.cn/detail/2216943" target="_blank" class="news-link">亚马逊云计算盛会开幕！CEO今晚登台，新AI模型和AI芯片即将亮相？</a> <font color='red'><strong>[2]</strong></font></li></ul><h4>微博 (1 条)</h4><ul><li><a href="https://s.weibo.com/weibo?q=%23OpenAI%E6%8B%89%E5%93%8D%E7%BA%A2%E8%89%B2%E8%AD%A6%E6%8A%A5%23&amp;t=31&amp;band_rank=10&amp;Refer=top" target="_blank" class="news-link">OpenAI拉响红色警报</a> [10]</li></ul></div>
+    </body>
+    </html>
+    
